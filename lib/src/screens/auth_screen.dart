@@ -121,7 +121,9 @@ class _AuthScreenState extends State<AuthScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
+              // ignore: deprecated_member_use
               Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              // ignore: deprecated_member_use
               Theme.of(context).colorScheme.secondary.withOpacity(0.1),
             ],
           ),
@@ -187,6 +189,7 @@ class _AuthScreenState extends State<AuthScreen>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
