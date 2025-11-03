@@ -58,12 +58,9 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
@@ -85,8 +82,6 @@ class _AuthScreenState extends State<AuthScreen>
           _isLogin ? 'Welcome back!' : 'Account created successfully!',
           isError: false,
         );
-
-        // Navigate to home screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
@@ -94,9 +89,7 @@ class _AuthScreenState extends State<AuthScreen>
         _showSnackBar(result.error ?? 'An error occurred', isError: true);
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -114,6 +107,8 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -134,43 +129,48 @@ class _AuthScreenState extends State<AuthScreen>
               padding: const EdgeInsets.all(24.0),
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: Card(
-                  elevation: 8,
-                  shadowColor: Colors.black26,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: screenWidth < 400 ? screenWidth : 400,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildHeader(),
-                          const SizedBox(height: 32),
-                          _buildEmailField(),
-                          const SizedBox(height: 16),
-                          _buildPasswordField(),
-                          if (!_isLogin) ...[
+                  child: Card(
+                    elevation: 8,
+                    shadowColor: Colors.black26,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildHeader(),
+                            const SizedBox(height: 28),
+                            _buildEmailField(),
                             const SizedBox(height: 16),
-                            _buildConfirmPasswordField(),
-                            const SizedBox(height: 8),
-                            PasswordStrengthIndicator(
-                              password: _passwordController.text,
-                            ),
+                            _buildPasswordField(),
+                            if (!_isLogin) ...[
+                              const SizedBox(height: 16),
+                              _buildConfirmPasswordField(),
+                              const SizedBox(height: 8),
+                              PasswordStrengthIndicator(
+                                password: _passwordController.text,
+                              ),
+                            ],
+                            if (_isLogin) _buildForgotPassword(),
+                            const SizedBox(height: 24),
+                            _buildSubmitButton(),
+                            const SizedBox(height: 16),
+                            _buildDivider(),
+                            const SizedBox(height: 16),
+                            _buildGoogleButton(),
+                            const SizedBox(height: 24),
+                            _buildToggleButton(),
                           ],
-                          if (_isLogin) _buildForgotPassword(),
-                          const SizedBox(height: 24),
-                          _buildSubmitButton(),
-                          const SizedBox(height: 16),
-                          _buildDivider(),
-                          const SizedBox(height: 16),
-                          _buildGoogleButton(),
-                          const SizedBox(height: 24),
-                          _buildToggleButton(),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -219,124 +219,108 @@ class _AuthScreenState extends State<AuthScreen>
     );
   }
 
-  Widget _buildEmailField() {
-    return CustomTextField(
-      controller: _emailController,
-      labelText: 'Email',
-      hintText: 'Enter your email',
-      prefixIcon: Icons.email_outlined,
-      keyboardType: TextInputType.emailAddress,
-      validator: Validators.validateEmail,
-    );
-  }
+  Widget _buildEmailField() => CustomTextField(
+    controller: _emailController,
+    labelText: 'Email',
+    hintText: 'Enter your email',
+    prefixIcon: Icons.email_outlined,
+    keyboardType: TextInputType.emailAddress,
+    validator: Validators.validateEmail,
+  );
 
-  Widget _buildPasswordField() {
-    return PasswordTextField(
-      controller: _passwordController,
-      labelText: 'Password',
-      validator: _isLogin ? null : Validators.validatePassword,
-      onChanged: (value) {
-        if (!_isLogin) {
-          setState(() {}); // Rebuild to update password strength indicator
-        }
-      },
-    );
-  }
+  Widget _buildPasswordField() => PasswordTextField(
+    controller: _passwordController,
+    labelText: 'Password',
+    validator: _isLogin ? null : Validators.validatePassword,
+    onChanged: (value) {
+      if (!_isLogin) setState(() {});
+    },
+  );
 
-  Widget _buildConfirmPasswordField() {
-    return PasswordTextField(
-      controller: _confirmPasswordController,
-      labelText: 'Confirm Password',
-      validator: (value) =>
-          Validators.validateConfirmPassword(value, _passwordController.text),
-    );
-  }
+  Widget _buildConfirmPasswordField() => PasswordTextField(
+    controller: _confirmPasswordController,
+    labelText: 'Confirm Password',
+    validator: (value) =>
+        Validators.validateConfirmPassword(value, _passwordController.text),
+  );
 
-  Widget _buildForgotPassword() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () {
-          _showSnackBar('Password reset coming soon!', isError: false);
-        },
-        child: const Text('Forgot Password?'),
-      ),
-    );
-  }
+  Widget _buildForgotPassword() => Align(
+    alignment: Alignment.centerRight,
+    child: TextButton(
+      onPressed: () =>
+          _showSnackBar('Password reset coming soon!', isError: false),
+      child: const Text('Forgot Password?'),
+    ),
+  );
 
-  Widget _buildSubmitButton() {
-    return FilledButton(
-      onPressed: _isLoading ? null : _submitForm,
-      style: FilledButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
-              ),
-            )
-          : Text(
-              _isLogin ? 'Sign In' : 'Sign Up',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  Widget _buildSubmitButton() => FilledButton(
+    onPressed: _isLoading ? null : _submitForm,
+    style: FilledButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    child: _isLoading
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
             ),
-    );
-  }
+          )
+        : Text(
+            _isLogin ? 'Sign In' : 'Sign Up',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+  );
 
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        const Expanded(child: Divider()),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'OR',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+  Widget _buildDivider() => Row(
+    children: [
+      const Expanded(child: Divider()),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          'OR',
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const Expanded(child: Divider()),
-      ],
-    );
-  }
-
-  Widget _buildGoogleButton() {
-    return OutlinedButton.icon(
-      onPressed: () {
-        _showSnackBar('Google Sign In coming soon!', isError: false);
-      },
-      icon: Image.network(
-        'https://www.google.com/favicon.ico',
-        height: 20,
-        width: 20,
-        errorBuilder: (context, error, stackTrace) =>
-            const Icon(Icons.g_mobiledata, size: 24),
       ),
-      label: const Text('Continue with Google'),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        side: BorderSide(color: Colors.grey[300]!),
-      ),
-    );
-  }
+      const Expanded(child: Divider()),
+    ],
+  );
 
-  Widget _buildToggleButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildGoogleButton() => OutlinedButton.icon(
+    onPressed: () =>
+        _showSnackBar('Google Sign In coming soon!', isError: false),
+    icon: Image.network(
+      'https://www.google.com/favicon.ico',
+      height: 20,
+      width: 20,
+      errorBuilder: (context, error, stackTrace) =>
+          const Icon(Icons.g_mobiledata, size: 24),
+    ),
+    label: const Text('Continue with Google'),
+    style: OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      side: BorderSide(color: Colors.grey[300]!),
+    ),
+  );
+
+  Widget _buildToggleButton() => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 4,
       children: [
         Text(
           _isLogin ? "Don't have an account? " : 'Already have an account? ',
           style: TextStyle(color: Colors.grey[600]),
         ),
-        TextButton(
-          onPressed: _toggleAuthMode,
+        GestureDetector(
+          onTap: _toggleAuthMode,
           child: Text(
             _isLogin ? 'Sign Up' : 'Sign In',
             style: TextStyle(
@@ -346,6 +330,6 @@ class _AuthScreenState extends State<AuthScreen>
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
 }
