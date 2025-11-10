@@ -656,8 +656,8 @@ If you encounter any issues:
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [jude-craft](https://github.com/jude-craft)
-- Email: derekjude254@gmail.com
+- GitHub: [jude-craft](https://github.com/Next-Gen-Evans)
+- Email: evansbuongo@gmail.com
 
 
 
