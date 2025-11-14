@@ -35,9 +35,7 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Logout'),
           ),
         ],
@@ -93,7 +91,10 @@ class _AccountScreenState extends State<AccountScreen> {
         if (result.isSuccess) {
           _showSnackBar('Password reset link sent to $email', isError: false);
         } else {
-          _showSnackBar(result.error ?? 'Failed to send reset link', isError: true);
+          _showSnackBar(
+            result.error ?? 'Failed to send reset link',
+            isError: true,
+          );
         }
       }
     }
@@ -135,9 +136,7 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -240,6 +239,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
@@ -288,9 +288,9 @@ class _AccountScreenState extends State<AccountScreen> {
             children: [
               Text(
                 'Account Information',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               _buildInfoRow(
@@ -333,6 +333,7 @@ class _AccountScreenState extends State<AccountScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -368,14 +369,16 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget _buildVerificationStatus(User? user) {
     final isVerified = user?.emailVerified ?? false;
-    
+
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isVerified
+                // ignore: deprecated_member_use
                 ? Colors.green.withOpacity(0.1)
+                // ignore: deprecated_member_use
                 : Colors.orange.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -443,7 +446,10 @@ class _AccountScreenState extends State<AccountScreen> {
               subtitle: 'Manage notification preferences',
               color: Colors.purple,
               onTap: () {
-                _showSnackBar('Notification settings coming soon', isError: false);
+                _showSnackBar(
+                  'Notification settings coming soon',
+                  isError: false,
+                );
               },
             ),
             const Divider(height: 1),
@@ -482,8 +488,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   Text(
                     'Security',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -530,9 +536,9 @@ class _AccountScreenState extends State<AccountScreen> {
                   Text(
                     'Danger Zone',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
                 ],
               ),
@@ -572,6 +578,7 @@ class _AccountScreenState extends State<AccountScreen> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -579,17 +586,11 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 12,
-        ),
+        style: TextStyle(color: Colors.grey[600], fontSize: 12),
       ),
       trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
     );
@@ -597,10 +598,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'Not available';
-    
+
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         return '${difference.inMinutes} minutes ago';
